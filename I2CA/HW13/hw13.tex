@@ -1,0 +1,165 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage{listings, tikz, fancyhdr, enumerate, circuitikz}
+\usepackage[shortlabels]{enumitem}
+\usepackage{amssymb}
+\usetikzlibrary{tikzmark}
+
+
+\pagestyle{fancy}
+\fancyhead[l]{Nodar Aniashvili}
+\fancyhead[c]{Computer Architecure - HW13}
+\fancyhead[r]{21st of December}
+\fancyfoot[c]{\thepage}
+\renewcommand{\headrulewidth}{0.2pt}
+\setlength{\headheight}{15pt}
+
+\begin{document}
+\begin{enumerate}[start=1, label={\bfseries Question \arabic*:}, leftmargin=1in]
+    \item 
+    \begin{flushleft}
+        Draw the scheme of MIPS data path 
+        for given instructions:
+    \end{flushleft}
+    \begin{lstlisting}
+        lw $S0, 16($S1)
+        Subi $S0, $S3, 298
+        sw $S0, 16($S1)        
+    \end{lstlisting}
+\end{enumerate}
+\begin{flushleft}
+    \textbf{The Solution:}
+\end{flushleft}
+
+\begin{tikzpicture}[remember picture, overlay]
+    % drawing the instruction decoder
+    \draw (13,0) rectangle (9,-1);
+    \node at (11, -0.5) {\Large \textit{\textbf{I}}};
+    \draw[-latex] (11, 0.5) -- (11,0);
+    \draw (11,0.5) -- (15,0.5);
+    \draw (13,0) -- (12.5,-0.5) -- (13,-1) -- cycle;
+    \draw[-latex] (13.5,-0.5) -- (13,-0.5);
+    \node at (13.8, -0.4) {\Large$\neg E$};
+    % drawing xtimm and af
+    \draw (10,-1) -- (10,-1.75);
+    \draw (12,-1) -- (12,-1.75);
+    \node at (10,-2) {\Large $xtimm$};
+    \node at (12, -2) {\Large $af$};
+    % misc
+    \draw (9.75, -1.5) -- (10.25, -1.5);
+    \node at (9.5, -1.5) {32};
+    \draw (11.75, -1.5) -- (12.25, -1.5);
+    \node at (11.5,-1.5) {4};
+    \draw (12, 0.25) -- (12,0.75);
+    \node at (12, 1) {32};
+    % drawing the ALU
+    \draw (9, -3.5) -- (10.5, - 3.5);
+    \draw (13, -3.5) -- (11.5, -3.5);
+    \draw (10.5, -3.5) -- (11, -4) -- (11.5, -3.5); 
+    \draw (9, -3.5) -- (10.25, -6);
+    \draw (13, -3.5) -- (11.75, -6);
+    \draw (11.75, -6) -- (10.25, -6);
+    \node at (11, -4.75) {\Large \textbf{32-ALU}};
+    % connecting stuff to alu
+    \draw[-latex] (10, -2.25) -- (10, -3.5);
+    \draw (9.75, -2.5) -- (10.25, -2.5);
+    \node at (9.5, -2.5) {32};
+    \draw (12, -2.25) |- (13.4, -2.5);
+    \draw[-latex] (13.4, -2.5) |- (12.75, -4);
+    \draw (13.15, -3) -- (13.65, -3);
+    \node at (12.9, -3) {4};
+    \draw[-latex] (13.4, -5.3) -- (12.1, -5.3);
+    \draw (13, -5.05) -- (13, -5.55);
+    \node at (13, -5.8) {32};
+    \node at (14, -5.3) {\large $itype$};
+    % drawing the memory incrementer
+    \draw (0, 0) rectangle (-2,-1);
+    \node at (-1, -0.5) {\textbf{30 inc}};
+    \draw (0,0) -- (0.3, 0.3);
+    \node at (0.5,0.5) {1};
+    \draw (-2,-1) -- (-2.3, -1.3);
+    % drawing the reset mux
+    \draw[-latex] (-1, -1) -- (-1, -1.8);
+    \draw (-0.5, -2.07) ellipse (1 and 0.3); 
+    \node at (-1, -2.07) {0};
+    \node at (0, -2.07) {1};
+    \draw[-latex] (0, -1.4) -- (0, -1.8);
+    \node at (0.14,-1.2) {$0^{32}$};
+    \draw (-1.25, -1.3) -- (-0.75, -1.3);
+    \node at (-1.49, -1.3) {30};
+    \draw[-latex] (1,-2.07) -- (0.5, -2.07);
+    \node at (1.5,-2.07) {$reset$};
+    % drawing the pc
+    \draw[-latex] (-0.5, -2.39) -- (-0.5, -3);
+    \draw (0.5, -3) rectangle (-1.5, -4);
+    \node at (-0.5,-3.5) {\textbf{\textit{PC}}};
+    \draw (0.5, -3.2) -- (0.2, -3.5) -- (0.5, -3.8);
+    \draw[-latex] (1, -3.5) -- (0.5, -3.5); 
+    \node at (1.8,-3.5) {$E \lor reset$};
+    % connecting pc to 30inc
+    \draw (-0.5, -4) -- (-0.5, -4.5);
+    \fill (-0.5, -4.5) circle (0.8mm);
+    \draw (-0.5, -4.5) -- (-2.8, -4.5);
+    \draw (-2.8, -4.5) -- (-2.8,0.5);
+    \draw (-2.8, 0.5) -- (-1, 0.5);
+    \draw[-latex] (-1, 0.5) -- (-1, 0);
+    \draw (-0.75,-4.25) -- (-0.25,-4.25);
+    \node at (-1,-4.25) {30};
+    % drawing the mux connecting xtimm and pc
+    \draw[-latex] (-0.5,-4) -- (-0.5,-5);
+    \draw (0, -5.3) ellipse (1 and 0.3);
+    \draw[-latex] (0.5,-4.5) -- (0.5, -5.05);
+    \draw (0.5,-4.5) -- (8,-4.5);
+    \draw (8,-4.5) |- (10,-3);
+    \fill (10,-3) circle (0.8mm);
+    \draw (7, -4.75) -- (7,-4.25);
+    \node at (7, -5) {32};
+    \node at (-0.5, -5.3) {0};
+    \node at (0.5,-5.3) {1};
+    \draw[-latex] (-1.5, -5.3) -- (-1,-5.3);
+    \node at (-1.75, -5.3) {$E$};
+    % drawing the memory unit
+    \draw[-latex] (0, -5.6) -- (0, -6.1);
+    \draw (3, -6.1) rectangle (-0.5, -8);
+    \node at (-0.1, -6.4) {\large $ad$};
+    \node at (2.5, -6.4) {\large $Din$};
+    \node at (1.25, -7.75) {\large $Mout$};
+    % drawing the mux connecting memory unit and ALU
+    \draw[-latex] (1.25,-8) -- (1.25, -8.75);
+    \draw (1.75, -9.05) ellipse (1 and 0.3);
+    \draw[-latex] (2.25, -8.25) -- (2.25, -8.8); 
+    \draw (11,-6) |- (2.25,-8.25);
+    \node at (1.25, -9.05) {1};
+    \node at (2.25, -9.05) {0};
+    \draw[-latex] (3.25, -9.05) -- (2.75, -9.05);
+    \node at (3.35, -9.05) {$l$};
+    % connecting Memory unit to instruction decoder
+    \draw (15, 0.5) -- (15, -8.4) -- (1.25,-8.4);
+    \fill (1.25, -8.4) circle (0.8mm);
+    \draw[-latex] (1.75, -9.35) -- (1.75, -10);
+    % drawing the gpr
+    \draw (3, -10) rectangle (0.5, -13);
+    \node at (1.75, -10.25) {\large $in$};
+    \node at (0.65, -11) {\large $a$};
+    \node at (0.65, -12) {\large $c$};
+    \node at (1.75, -12.75) {\large $Aout$};
+    \draw[-latex] (0, -11) -- (0.5, -11);
+    \draw[-latex] (0, -12) -- (0.5, -12);
+    \node at (-0.3, -11) {$rs$};
+    \node at (-0.4, -11.9) {$cad$};
+    \draw (0.25, -11.25) -- (0.25, -10.75);
+    \node at (0.25, -10.55) {5};
+    \draw (0.25, -12.25) -- (0.25, -11.75);
+    \node at (0.25, -12.45) {5};
+    \node at (1.75, -11.5) {\Large \textit{\textbf{gpr}}};
+    \draw[-latex] (3.5, -11.5) -- (3, -11.5);
+    \node at (4.4, -11.5) {$gprw \land E$};
+    % connecting gpr to ALU
+    \draw (1.75, -13) -- (1.75,-14);
+    \draw (1.5, -13.5) -- (2, -13.5);
+    \node at (2.25, -13.5) {32};
+    \draw (1.75,-14) -- (16, -14);
+    \draw (16, -14) -- (16, -2.75) -- (12, -2.75);
+    \draw[-latex] (12,-2.75) -- (12, -3.5);
+\end{tikzpicture}
+
+\end{document}
